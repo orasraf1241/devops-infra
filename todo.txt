@@ -1,0 +1,2 @@
+add tf vars 
+add note for each sections 

@@ -1,0 +1,25 @@
+namespace: counter-de
+
+deployment:
+  name: counter-app
+  replicas: 3
+  container:
+    name: counter-app
+    image: nginx
+    port: 80
+
+ingress:
+  name: counter-app-ingress
+  annotations:
+    ingressClass: alb
+    scheme: internet-facing
+    targetType: ip
+    backendProtocol: HTTP
+    listenPorts: [80, 443]
+  host: your-domain.com
+
+service:
+  name: counter-app-service
+  port: 80
+  targetPort: 80
+  type: ClusterIP
