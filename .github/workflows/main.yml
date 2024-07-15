@@ -6,12 +6,45 @@ on:
       image_url:
         description: 'Docker image URL'
         required: true
+      destroy:
+        description: 'Destroy the infrastructure'
+        required: false
+        default: 'false'
   repository_dispatch:
     types: [deploy]
 
 jobs:
+  validate:
+    name: Validate Terraform and YAML Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+
+      - name: Validate Terraform Format
+        run: terraform fmt -check -recursive
+        working-directory: ./terraform
+
+      - name: Validate Terraform
+        run: terraform validate
+        working-directory: ./terraform
+
+      - name: Generate Terraform Docs
+        run: terraform-docs markdown . --output-file README.md
+        working-directory: ./terraform
+
   deploy:
     name: Deploy to EKS
+    needs: validate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,7 +55,20 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./terraform
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
@@ -34,11 +80,43 @@ jobs:
         with:
           version: 'v3.5.4'
 
+      - name: Create Namespace
+        run: kubectl create namespace counter-service || echo "Namespace counter-service already exists"
+
       - name: Print Docker Image URL for Test
         run: |
-          echo "Docker Image URL for deployment: ${{ github.event.client_payload.image_url }}"
+          echo "Docker Image URL for deployment: ${{ github.event.inputs.image_url }}"
 
       - name: Deploy with Helm
         run: |
           helm upgrade --install counter-service ./deployment \
-            --set image.repository=${{ github.event.client_payload.image_url }}
+            --namespace counter-service \
+            --set image.repository=${{ github.event.inputs.image_url }}
+
+  destroy:
+    name: Destroy Terraform Infrastructure
+    runs-on: ubuntu-latest
+    if: github.event.inputs.destroy == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
+        working-directory: ./terraform
