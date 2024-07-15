@@ -103,21 +103,18 @@ jobs:
             --namespace ${{ vars.NAMESPACE }} \
             --create-namespace
 
-
-        working-directory: ./terraform
       # Destroy the Terraform-managed infrastructure
       - name: Terraform Destroy
         run: |
           if [ "${{ vars.DESTROY }}" = "true" ]; then
             echo "Destroy the environment using Terraform"
-            terraform init
+            terraform init 
             terraform destroy -auto-approve
           else
             echo "Skipping destroy as condition is not met"
           fi
         working-directory: ./terraform
-
-
+        
 
   # destroy:
   #   name: Destroy Terraform Infrastructure
