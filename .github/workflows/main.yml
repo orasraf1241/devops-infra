@@ -1,13 +1,15 @@
 name: Deploy Counter Service to EKS and the Environment
 
 on:
+  # Trigger the workflow manually and optionally accept a 'destroy' input
   workflow_dispatch:
     inputs:
       destroy:
         description: 'Destroy the infrastructure'
-        required: true
+        required: false
         default: 'false'
-        
+  
+  # Trigger the workflow on a repository_dispatch event with type 'deploy'
   repository_dispatch:
     types: [deploy]
 
@@ -33,18 +35,22 @@ jobs:
         with:
           terraform_version: 1.5.7  # Ensure you are using the latest stable version
 
+      # Initialize Terraform configuration
       - name: Terraform Init
         run: terraform init
         working-directory: ./terraform
 
+      # Validate Terraform format to ensure it follows standards
       - name: Validate Terraform Format
         run: terraform fmt -check -recursive
         working-directory: ./terraform
 
+      # Validate Terraform configuration files
       - name: Validate Terraform
         run: terraform validate
         working-directory: ./terraform
 
+      # Apply Terraform configuration to create/update infrastructure
       - name: Terraform Apply
         run: |
           echo "Applying Terraform configuration"
@@ -68,28 +74,27 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           export AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}
 
-
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
         with:
           version: 'latest'
   
-
+      # Configure kubectl to use the EKS cluster 
       - name: Configure kubectl to use EKS cluster
         run: |
           echo "Configuring kubectl to use EKS cluster"
           aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }} --region ${{ vars.AWS_REGION }}
-          kubectl get pods -A
 
       - name: Print Docker Image URL for Test
         run: |
-            echo "Docker Image URL for deployment: ${{ github.event.client_payload.image_url }}"
+          echo "Docker Image URL for deployment: ${{ github.event.client_payload.image_url }}"
   
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:
           version: 'v3.5.4'
-
+      
+      # Deploy the application to EKS using Helm
       - name: Deploy with Helm
         run: |
           echo "Deploying with Helm"
@@ -98,6 +103,7 @@ jobs:
             --namespace ${{ vars.NAMESPACE }} \
             --create-namespace
 
+            
   destroy:
     name: Destroy Terraform Infrastructure
     runs-on: ubuntu-latest
@@ -107,7 +113,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set AWS credentials
-        run: |
+        run: |      # Set AWS credentials as environment variables | need to move to action
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           echo "AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}" >> $GITHUB_ENV
@@ -120,10 +126,12 @@ jobs:
         with:
           terraform_version: 1.5.7
 
+        # Initialize Terraform configuration
       - name: Terraform Init
         run: terraform init
         working-directory: ./terraform
 
+        # Destroy the Terraform-managed infrastructure
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
         working-directory: ./terraform
