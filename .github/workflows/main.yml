@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Call Set AWS Credentials
-        uses: ./.github/workflows/set-aws-credentials.yml  # Call reusable workflow to set AWS credentials.
+        uses: ./.github/action/set-aws-credentials  # Call reusable workflow to set AWS credentials.
 
 
       - name: Setup Terraform
@@ -55,9 +55,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+        
       - name: Call Set AWS Credentials
-        uses: ./.github/workflows/set-aws-credentials.yml  # Call reusable workflow to set AWS credentials.
-
+        uses: ./.github/action/set-aws-credentials  # Call reusable workflow to set AWS credentials.
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
@@ -97,8 +97,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Call Set AWS Credentials
-        uses: ./.github/workflows/set-aws-credentials.yml  # Call reusable workflow to set AWS credentials.
-
+        uses: ./.github/action/set-aws-credentials  # Call reusable workflow to set AWS credentials.
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2.0.2
