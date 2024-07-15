@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       
       - name: Set AWS credentials
         run: |
@@ -103,11 +103,11 @@ jobs:
             --namespace ${{ vars.NAMESPACE }} \
             --create-namespace
 
-            
+
   destroy:
     name: Destroy Terraform Infrastructure
     runs-on: ubuntu-latest
-    if: github.event.inputs.destroy == 'true'
+    if: ${{ vars.DESTROY }} == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
