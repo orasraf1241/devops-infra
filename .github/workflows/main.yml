@@ -6,7 +6,9 @@ on:
       destroy:
         description: 'Destroy the infrastructure'
         required: false
-        default: 'false'
+        default: false
+        type: boolean
+
   repository_dispatch:
     types: [deploy]
 
@@ -18,11 +20,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       
-      
-      - name: Print Docker Image URL for Test
-        run: |
-          echo "Docker Image URL for deployment: ${{ github.event.inputs.image_url }}"
-
       - name: Set AWS credentials
         run: |
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
@@ -49,9 +46,14 @@ jobs:
         run: terraform validate
         working-directory: ./terraform
 
+      - name: Terraform Apply
+        run: |
+          echo "Applying Terraform configuration"
+          terraform apply -auto-approve
+        working-directory: ./terraform 
 
   deploy:
-    name: Deploy to EKS
+    name: Deploy the Application EKS using Helm
     needs: validate
     runs-on: ubuntu-latest
     steps:
@@ -67,22 +69,6 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           export AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2.0.2
-        with:
-          terraform_version: 1.5.7
-
-      # - name: Terraform Init
-      #   run: |
-      #     echo "Initializing Terraform"
-      #     terraform init
-      #   working-directory: ./terraform 
-
-      # - name: Terraform Apply
-      #   run: |
-      #     echo "Applying Terraform configuration"
-      #     terraform apply -auto-approve
-      #   working-directory: ./terraform 
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
