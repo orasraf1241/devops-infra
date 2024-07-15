@@ -4,7 +4,6 @@ This repository contains the CD pipeline configuration for deploying the counter
 
 ## Environment Setup
 
-### Kubernetes
 
 - **EKS Cluster**: The environment is set up with an EKS cluster deployed via an IaC pipeline using Terraform.
 - **Region**: The EKS cluster is deployed in the `eu-west-1` region.
