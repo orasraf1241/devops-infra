@@ -3,9 +3,6 @@ name: Deploy Counter Service to EKS and the Environment
 on:
   workflow_dispatch:
     inputs:
-      image_url:
-        description: 'Docker image URL'
-        required: true
       destroy:
         description: 'Destroy the infrastructure'
         required: false
@@ -99,10 +96,10 @@ jobs:
           aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }} --region ${{ vars.AWS_REGION }}
           kubectl get pods -n counter-dev
 
-      - name: Print Docker Image URL for Test
-        run: |
-          echo "Docker Image URL for deployment: ${{ github.event.inputs.image_url }}"
-
+          - name: Print Docker Image URL for Test
+          run: |
+            echo "Docker Image URL for deployment: ${{ github.event.client_payload.image_url }}"
+  
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:
@@ -112,7 +109,7 @@ jobs:
         run: |
           echo "Deploying with Helm"
           helm upgrade --install counter-service ./deployment \
-            --set deployment.container.image=${{ github.event.inputs.image_url }} \
+            --set deployment.container.image=${{ github.event.client_payload.image_url }}  \
             --namespace ${{ vars.NAMESPACE }} \
             --create-namespace
 
