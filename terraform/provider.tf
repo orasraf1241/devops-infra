@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "or-asraf-tfsatae"
+    bucket = "tf-state-or-asraf"
     key    = "terraform-state"
     region = "eu-west-1"
   }
@@ -49,3 +49,5 @@ provider "helm" {
     cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
   }
 }
+
+
