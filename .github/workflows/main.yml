@@ -94,7 +94,7 @@ jobs:
         run: |
           echo "Configuring kubectl to use EKS cluster"
           aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }} --region ${{ vars.AWS_REGION }}
-          kubectl get pods -n counter-dev
+          kubectl get pods -A
 
           - name: Print Docker Image URL for Test
           run: |
