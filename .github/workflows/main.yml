@@ -38,9 +38,6 @@ jobs:
         run: terraform validate
         working-directory: ./terraform
 
-      - name: Generate Terraform Docs
-        run: terraform-docs markdown . --output-file README.md
-        working-directory: ./terraform
 
   deploy:
     name: Deploy to EKS
@@ -57,18 +54,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.0.0
+      # - name: Setup Terraform
+      #   uses: hashicorp/setup-terraform@v1
+      #   with:
+      #     terraform_version: 1.0.0
 
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./terraform
+      # - name: Terraform Init
+      #   run: terraform init
+      #   working-directory: ./terraform
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        working-directory: ./terraform
+      # - name: Terraform Apply
+      #   run: terraform apply -auto-approve
+      #   working-directory: ./terraform
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
