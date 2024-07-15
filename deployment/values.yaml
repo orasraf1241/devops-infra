@@ -1,4 +1,4 @@
-namespace: counter-de
+namespace: counter-dev
 
 deployment:
   name: counter-app
