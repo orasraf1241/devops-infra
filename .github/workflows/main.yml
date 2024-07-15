@@ -107,7 +107,7 @@ jobs:
         run: |
           echo "Deploying with Helm"
           helm upgrade --install counter-service ./deployment \
-            --set deployment.container.image=${{ github.event.inputs.image_url }} \
+            --set deployment.container.image=busybox \
             --namespace ${{ vars.NAMESPACE }} \
             --create-namespace
 
