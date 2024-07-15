@@ -104,10 +104,6 @@ jobs:
             --create-namespace
 
 
-
-
- 
-
         working-directory: ./terraform
       # Destroy the Terraform-managed infrastructure
       - name: Terraform Destroy
