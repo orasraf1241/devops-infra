@@ -108,7 +108,7 @@ jobs:
           echo "Deploying with Helm"
           helm upgrade --install counter-service . \
             --set deployment.container.image=${{ github.event.inputs.image_url }} \
-            --namespace counter-dev \
+            --namespace ${{ vars.NAMESPACE }} \
             --create-namespace
             
   destroy:

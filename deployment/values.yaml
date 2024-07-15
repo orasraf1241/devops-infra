@@ -7,7 +7,7 @@ deployment:
   replicas: 3  # The number of replicas for the deployment
   container:
     name: counter-app 
-    image: nginx  # The Docker image to use for the container
+    imae: nginx  # The Docker image to use for the container
     port: 80  # The port on which the container will listen
 
 # Ingress configuration
