@@ -106,11 +106,11 @@ jobs:
       - name: Deploy with Helm
         run: |
           echo "Deploying with Helm"
-          helm upgrade --install counter-service . \
+          helm upgrade --install counter-service ./deployment \
             --set deployment.container.image=${{ github.event.inputs.image_url }} \
             --namespace ${{ vars.NAMESPACE }} \
             --create-namespace
-            
+
   destroy:
     name: Destroy Terraform Infrastructure
     runs-on: ubuntu-latest
