@@ -1,25 +1,29 @@
+# The namespace where the resources will be deployed
 namespace: counter-dev
 
+# Deployment configuration
 deployment:
-  name: counter-app
-  replicas: 3
+  name: counter-app  # The name of the deployment
+  replicas: 3  # The number of replicas for the deployment
   container:
-    name: counter-app
-    image: nginx
-    port: 80
+    name: counter-app 
+    image: nginx  # The Docker image to use for the container
+    port: 80  # The port on which the container will listen
 
+# Ingress configuration
 ingress:
-  name: counter-app-ingress
+  name: counter-app-ingress  # The name of the ingress resource
   annotations:
-    ingressClass: alb
-    scheme: internet-facing
-    targetType: ip
-    backendProtocol: HTTP
-    listenPorts: [80, 443]
-  host: your-domain.com
+    ingressClass: alb  # Specifies the ingress class to use, e.g., Application Load Balancer (ALB)
+    scheme: internet-facing  # The scheme of the load balancer
+    targetType: ip  # The target type for the load balancer
+    backendProtocol: HTTP  # The protocol for backend communication
+    listenPorts: [80, 443]  # The ports on which the load balancer will listen
+  host: your-domain.com  # The domain name for the ingress
 
+# Service configuration
 service:
-  name: counter-app-service
-  port: 80
-  targetPort: 80
-  type: ClusterIP
+  name: counter-app-service  # The name of the service
+  port: 80  # The port on which the service will be exposed
+  targetPort: 80  # The port on the container to which the service will forward traffic
+  type: ClusterIP  # The type of the service (ClusterIP, NodePort, LoadBalancer)
