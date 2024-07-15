@@ -96,8 +96,8 @@ jobs:
           aws eks update-kubeconfig --name ${{ vars.CLUSTER_NAME }} --region ${{ vars.AWS_REGION }}
           kubectl get pods -A
 
-          - name: Print Docker Image URL for Test
-          run: |
+      - name: Print Docker Image URL for Test
+        run: |
             echo "Docker Image URL for deployment: ${{ github.event.client_payload.image_url }}"
   
       - name: Install Helm
