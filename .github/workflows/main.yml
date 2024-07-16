@@ -31,9 +31,9 @@ jobs:
           export AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2.0.2
+        uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.5.7  # Ensure you are using the latest stable version
+          terraform_version: 1.9.0  # Ensure you are using the latest stable version
 
       # Initialize Terraform configuration
       - name: Terraform Init
@@ -108,7 +108,7 @@ jobs:
         run: |
           if [ "${{ vars.DESTROY }}" = "true" ]; then
             echo "Destroy the environment using Terraform"
-            terraform init 
+            terraform init
             terraform destroy -auto-approve
           else
             echo "Skipping destroy as condition is not met"
