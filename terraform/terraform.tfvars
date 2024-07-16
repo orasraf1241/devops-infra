@@ -34,7 +34,7 @@ tags = {
 cluster_name = "orasraf-cluster"
 
 # The Kubernetes version for the EKS cluster
-cluster_version = "1.30"
+cluster_version = "1.28"
 
 # Boolean to enable public access to the Kubernetes API server endpoint
 cluster_endpoint_public_access = true

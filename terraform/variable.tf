@@ -11,7 +11,7 @@ variable "region" {
 variable "vpc_name" {
   description = "The name of the VPC"
   type        = string
-  default     = "check-point-vpc"
+  default     = "orasraf-project-vpc"
 }
 
 variable "cidr" {
